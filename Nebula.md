@@ -1,5 +1,7 @@
 # JupyterHub + Kubernetes on Nebula (OpenStack)
 
+(Time to install: 1 hour)
+
 The following is based on Andrea Zonca's [Deploy scalable JupyterHub with Kubernetes on Jetstream](https://zonca.github.io/2017/12/scalable-jupyterhub-kubernetes-jetstream.html) with minor modifications for NCSA Nebula.  We will provide a separate set of instruction using the Terraform/Kubespray process.  
 
 This is a demonstration of how to setup a scalable JupyterHub cluster on NCSA Nebula using Rook for shared storage and the Zero-to-JupyterHub helm chart.  This starts with a 2-node cluster but the same process can be used to create larger clusters. Unlike Jetstream, Nebula does not provide DNS names for instances.
