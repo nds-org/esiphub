@@ -226,12 +226,12 @@ auth:
 Install Jupyterhub:
 ```
 sudo helm repo add jupyterhub https://jupyterhub.github.io/helm-chart/
-sudo helm install jupyterhub/jupyterhub --version=v0.6 --name=jup     --namespace=jup -f config_jupyterhub_helm.yaml
+sudo helm install jupyterhub/jupyterhub --version=v0.6 --name=hub --namespace=hub -f config_jupyterhub_helm.yaml
 ```
 
 And to re-apply config:
 ```
-sudo helm upgrade jup jupyterhub/jupyterhub -f config_jupyterhub_helm.yaml
+sudo helm upgrade hub jupyterhub/jupyterhub -f config_jupyterhub_helm.yaml
 ````
 
 ## Test it out
