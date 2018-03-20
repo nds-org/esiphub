@@ -232,7 +232,15 @@ sudo helm install jupyterhub/jupyterhub --version=v0.6 --name=hub --namespace=hu
 And to re-apply config:
 ```
 sudo helm upgrade hub jupyterhub/jupyterhub -f config_jupyterhub_helm.yaml
-````
+```
+
+Check to see that hub is running:
+```
+$ kubectl get pods --namespace=hub
+NAME                     READY     STATUS    RESTARTS   AGE
+hub-6c89c478b5-bblgj     1/1       Running   0          3d
+proxy-764f45b54f-g2f2m   2/2       Running   0          3d
+```
 
 ## Test it out
 
@@ -240,7 +248,21 @@ Go to https://esiphub.ndslabs.org. With Github authentication enabled, you shoul
 
 To see the running notebook container:
 ```
-$ kubectl get pods --namespace=jup
+$ kubectl get pods --namespace=hub
 ...
 jup           jupyter-craig-2dwillis                                  1/1       Running   0          1m
 ```
+
+### Configure JupyterHub
+
+See the [Customization guide](https://zero-to-jupyterhub.readthedocs.io/en/latest/). Options include:
+
+* Custom Docker images
+* Custom authentication
+* Populating home directory with files.
+
+### Learn Kubernetes
+
+Now you have a running real Kubernetes cluster and there are many things to learn. Start with the Kubernetes documentation (Concepts) and maybe tutorial:
+
+* https://kubernetes.io/docs/home/?path=users&persona=app-developer&level=foundational
