@@ -94,6 +94,7 @@ vdb    253:16   0  20G  0 disk
 Create the filesystem:
 ```
 sudo mkfs -t ext4 /dev/vdb
+sudo mkdir /data
 sudo mount -t ext4 /dev/vdb /data
 ```
 
@@ -222,7 +223,12 @@ auth:
     callbackUrl: "https://esiphub.ndslabs.org/hub/oauth_callback"
 ```
 
-And re-apply config:
+Install Jupyterhub:
+```
+sudo helm install jupyterhub/jupyterhub --version=v0.6 --name=jup     --namespace=jup -f config_jupyterhub_helm.yaml
+```
+
+And to re-apply config:
 ```
 sudo helm upgrade jup jupyterhub/jupyterhub -f config_jupyterhub_helm.yaml
 ````
