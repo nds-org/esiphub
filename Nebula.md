@@ -1,4 +1,4 @@
-# JupyterHub + Kubernetes on Nebula (OpenStack)
+# JupyterHub + Kubernetes on Nebula/SDSC (OpenStack)
 
 (Time to install: 1 hour)
 
