@@ -266,3 +266,90 @@ See the [Customization guide](https://zero-to-jupyterhub.readthedocs.io/en/lates
 Now you have a running real Kubernetes cluster and there are many things to learn. Start with the Kubernetes documentation (Concepts) and maybe tutorial:
 
 * https://kubernetes.io/docs/home/?path=users&persona=app-developer&level=foundational
+
+
+### Install Dask
+
+We can follow the basic instructions from  https://github.com/pangeo-data/pangeo/wiki/Launch-development-cluster-on-Google-Cloud-Platform-with-Kubernetes-and-Helm with a few modifications to run outside of GCE. This installs a JupyterLab instance with Dask scheduler and workers.  We do need to modify the service type to use NodePort and add ingress rules, since OpenStack has no built in loadbalancer support.
+
+Install the dask chart:
+```
+sudo helm repo add dask https://dask.github.io/helm-chart
+sudo helm install dask/dask
+```
+
+Confirm things are running:
+```
+kubectl get pods
+NAME                                        READY     STATUS    RESTARTS   AGE
+invinvible-zorse-jupyter-7f6d8fb7bd-zhqdb   1/1       Running   0          11d
+invinvible-zorse-schedul-5b64b5dcfc-cpxf4   1/1       Running   0          19h
+invinvible-zorse-worker-85db965d5c-9chfj    1/1       Running   0          11d
+invinvible-zorse-worker-85db965d5c-c56fc    1/1       Running   0          11d
+invinvible-zorse-worker-85db965d5c-xg675    1/1       Running   4          19h
+```
+
+We'll need to edit the service spec for the jupyter and scheduler services:
+```
+kubectl edit svc invinvible-zorse-jupyter
+...
+type: NodePort
+...
+```
+
+Create the ingress rules in a file called in `dask-ingress.yaml`
+```
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "false"
+    ingress.kubernetes.io/whitelist-source-range: 0.0.0.0/0
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+  name: dask
+  namespace: default
+spec:
+  rules:
+  - host: scheduler.dask.ndslabs.org
+    http:
+      paths:
+      - backend:
+          serviceName: invinvible-zorse-schedul
+          servicePort: 80
+  tls:
+  - hosts:
+    - scheduler.dask.ndslabs.org
+    secretName: kubelego-tls-dask
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "false"
+    ingress.kubernetes.io/whitelist-source-range: 0.0.0.0/0
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+  name: dask-jupyter
+  namespace: default
+spec:
+  rules:
+  - host: jupyter.dask.ndslabs.org
+    http:
+      paths:
+      - backend:
+          serviceName: invinvible-zorse-jupyter
+          servicePort: 80
+  tls:
+  - hosts:
+    - jupyter.dask.ndslabs.org
+    secretName: kubelego-tls-jupyter
+```    
+
+And apply the rules:
+```
+kubectl create -f dask-ingress.yaml
+```
+
+If DNS is setup correctly, you should now be able to access the JupyterLab instance (https://jupyter.dask.ndslabs.org) and Dask scheduler. 
+
