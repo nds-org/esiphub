@@ -101,7 +101,7 @@ sudo mount -t ext4 /dev/vdb /data
 On master/node1, install Rook via helm chart:
 ```
 sudo helm repo add rook-alpha https://charts.rook.io/alpha
-sudo helm install rook-alpha/rook
+sudo helm install rook-alpha/rook --name rook --version 0.6.2
 ```
 
 
