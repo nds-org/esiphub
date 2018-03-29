@@ -338,6 +338,47 @@ singleuser:
 If you have a running instance, you'll need to go to "Control Panel", stop your server and restart to see the JupyterLab interface.
 
 
+### Custom JupyterLab/Notebook image
+
+Create a new Dockerfile, for exampe -- add git support to the basic single-user environment:
+```
+FROM jupyterhub/k8s-singleuser-sample:v0.6
+
+USER root
+RUN apt-get -qq update && apt-get -qq install git
+
+USER $NB_USER
+```
+
+Next, build and push the image:
+```
+docker build -t <you>/k8s-singleuser-sample:v0.6  .
+docker login
+docker push <you>/k8s-singleuser-sample:v0.6
+```
+
+
+Edit `config_jupyterhub_helm.yaml` and change the singleuser image:
+```
+singleuser:
+  image:
+    name: <you>/k8s-singleuser-sample
+    tag: v0.6
+```
+
+Upgrade the install
+```
+sudo helm upgrade hub jupyterhub/jupyterhub -f config_jupyterhub_helm.yaml
+```
+
+
+
+### Automated builds on Dockerhub
+
+It's a good idea to put your Dockerfiles and any associated code/scripts/etc in Github and to setup Automated builds through Dockerhub. You can configure it to build the image each time you commit changes.  You can also include the Dockerfile in an existing repo if it makes sense.
+
+
+
 
 ### Learn Kubernetes
 
