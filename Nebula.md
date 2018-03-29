@@ -252,7 +252,6 @@ $ kubectl get pods --namespace=hub
 ...
 jup           jupyter-craig-2dwillis                                  1/1       Running   0          1m
 ```
-
 ### Configure JupyterHub
 
 See the [Customization guide](https://zero-to-jupyterhub.readthedocs.io/en/latest/). Options include:
@@ -261,11 +260,93 @@ See the [Customization guide](https://zero-to-jupyterhub.readthedocs.io/en/lates
 * Custom authentication
 * Populating home directory with files.
 
+### Configuring LDAP authentication
+
+As of this writing, the lastest production version of the [Jupyterhub helm chart](https://jupyterhub.github.io/helm-chart/) is v0.6. Unfortunately, the default hub image (jupyterhub/k8s-hub:v0.6) does not include the LDAP authenticator.  However, it looks like this will be in [v0.7](https://github.com/jupyterhub/zero-to-jupyterhub-k8s/issues/264).
+
+In the meantime, to enable LDAP authentication requires three steps: 1) create a custom hub Docker image; 2) enable LDAP authentication in the Jupyterhub config and 3) update the hub deployment to use your custom image.
+
+To create a custom Docker image, you will need to have a Dockerhub account. 
+
+On your system, create a text file called `Dockerfile` with the following contents:
+```
+FROM jupyterhub/k8s-hub:v0.6
+
+USER root
+RUN pip3 install git+https://github.com/jupyterhub/ldapauthenticator@a8bc231
+
+USER $NB_USER
+```
+This will add the ldapauthenticator package to the v0.6 hub. 
+
+Next, build and push the image:
+```
+docker build -t <you>/k8s-hub:v0.6  .
+docker login
+docker push <you>/k8s-hub:v0.6
+```
+
+Edit `config_jupyterhub_helm.yaml` and change the auth section from oauth to LDAP:
+```
+auth:
+  type: custom
+  custom:
+    className: ldapauthenticator.LDAPAuthenticator
+    config:
+      server_address: ldap.ncsa.illinois.edu
+      bind_dn_template:
+        - "uid={username},ou=People,dc=ncsa,dc=illinois,dc=edu"
+      allowed_groups:
+        - "cn=org_isda,ou=Groups,dc=ncsa,dc=illinois,dc=edu"
+      use_ssl: true
+      lookup_dn: false
+      escape_userdn: false
+```
+
+You can change the `cn=org_isda` to another group.
+
+Finally, you need to manually edit the running deployment:
+```
+kubectl edit deploy -n hub hub
+
+...
+        image: jupyter/k8s-hub:v0.6
+        imagePullPolicy: IfNotPresent
+        name: hub-container
+...
+```
+
+Change `jupyterhub/k8s-hub:v0.6` to `<you>/k8s-hub:v0.6`.
+
+This should restart the hub container. To test, open your browser to https://incorehub.ndslabs.org and you should be prompted to enter your NCSA LDAP username/password instead of github oauth credentials.
+
+### Using JupyterLab by default
+
+You can easily enable JupyterLab instead of the default notebook interface by modifying the hub and singleuser sections of the config with the following:
+
+```
+hub
+  extraEnv:
+    JUPYTER_ENABLE_LAB: 1
+  extraConfig: |
+    c.KubeSpawner.cmd = ['jupyter-labhub']
+    
+singleuser:
+  defaultUrl: "/lab"    
+```
+
+If you have a running instance, you'll need to go to "Control Panel", stop your server and restart to see the JupyterLab interface.
+
+
+
 ### Learn Kubernetes
 
 Now you have a running real Kubernetes cluster and there are many things to learn. Start with the Kubernetes documentation (Concepts) and maybe tutorial:
 
 * https://kubernetes.io/docs/home/?path=users&persona=app-developer&level=foundational
+
+
+
 
 
 ### Install Dask
