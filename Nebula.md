@@ -170,6 +170,47 @@ NAME                                                    READY     STATUS    REST
 lego-kube-lego-76f84957bf-vvjxj                         1/1       Running   0          21s
 ```
 
+### Changing to use the production API
+To change from the staging to production ACME api, you'll need to change the LEGO_URL value.  I've only done this once and there may be a better way, but I just deleted and reinstalled the helm chart:
+
+```
+sudo helm delete lego --purge --namespace=support
+```
+There was a problem with a secret that wasn't deleted, so I deleted manually:
+
+```
+$ kubectl get secret kube-lego-account -n support
+NAME                TYPE      DATA      AGE
+kube-lego-account   Opaque    2         3d
+
+$ kubectl delete secret kube-lego-account -n support
+```
+
+Then reinstall the helm chart:
+```
+sudo helm install --name lego stable/kube-lego --namespace=support --set config.LEGO_EMAIL=<your email> --set config.LEGO_URL=https://acme-v01.api.letsencrypt.org/directory
+```
+
+This will re-install kube-lego.  You can look at the pod logs to see it request the new certificates:
+
+```
+kubectl logs lego-kube-lego-5d9bd7d54f-t5k8k -n support
+...
+time="2018-04-13T21:34:55Z" level=info msg="Attempting to create new secret" context=secret name=kubelego-tls-jupyterhub namespace=jup
+time="2018-04-13T21:34:55Z" level=info msg="requesting certificate for esiphub.ndslabs.org" context="ingress_tls" name=jupyterhub namespace=jup
+...
+time="2018-04-13T21:35:17Z" level=info msg="successfully got certificate: domains=[esiphub.ndslabs.org] url=https://acme-v01.api.letsencrypt.org/acme/cert/03ee7a732d2eaf6c014f7347fdc36172a4bd" context=acme
+...
+```
+
+If you don't see this message, you many need to restart the nginx pods:
+```
+kubectl delete pod -n support support-nginx-ingress-controller-xxx1
+kubectl delete pod -n support support-nginx-ingress-controller-xxx2
+```
+
+
+
 ## Install JupyterHub
 Finally, installing JupyterHub.  This step will require DNS, which we setup using our `ndslabs.org` domain.
 
