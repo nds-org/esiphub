@@ -174,8 +174,9 @@ lego-kube-lego-76f84957bf-vvjxj                         1/1       Running   0   
 To change from the staging to production ACME api, you'll need to change the LEGO_URL value.  I've only done this once and there may be a better way, but I just deleted and reinstalled the helm chart:
 
 ```
-sudo helm delete lego --purge --namespace=support
+sudo helm delete lego --purge
 ```
+
 There was a problem with a secret that wasn't deleted, so I deleted manually:
 
 ```
