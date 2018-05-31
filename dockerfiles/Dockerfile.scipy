@@ -1,6 +1,6 @@
 FROM jupyter/scipy-notebook:latest
 
-RUN conda install -y nb_conda_kernels
-RUN conda install -c anaconda netcdf4
-RUN conda install basemap
-RUN conda install -c conda-forge cartopy
+RUN conda install -y -q nb_conda_kernels && \
+    conda install -y -q -c anaconda netcdf4 && \
+    conda install -y -q basemap &&  \
+    conda install -y -q -c conda-forge cartopy \
