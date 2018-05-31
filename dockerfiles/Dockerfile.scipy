@@ -2,4 +2,4 @@ RUN conda install -y -q nb_conda_kernels && \
     conda install -y -q -c anaconda netcdf4 && \
     conda install -y -q basemap &&  \
     conda install -y -q -c conda-forge cartopy && \
-    conda install -c conda-forge pydap \
+    conda install -c conda-forge pydap
