@@ -3,7 +3,7 @@
 ESIPhub is an incubator project of the [Earth Science Information Partners (ESIP) Lab](http://www.esipfed.org/esip-lab) initiative to develop a template for deploying a customized JupyterHub environment to support workshops at ESIP annual meetings.  Each year, scientists, engineers, educators, and practitioners convene to discuss their work, share ideas, and learn new tools and techniques. Workshops are often interactive and sometimes developed around applications such as Jupyter Notebooks. The goal of this project is to provide a framework for deploying JupyterHub using a standardized workshop configuration to provide predictability for instructors and reduce the time to setup.
 
 Aspects of the project include:
-* Template for deploying JupyterHub for ESIP
+* Template for deploying JupyterHub for ESIP via the [Zero-to-JupyterHub](https://zero-to-jupyterhub.readthedocs.io/) framework
 * Authentication using ESIP credentials
 * Ability to deploy on both commercial cloud (AWS) and OpenStack environments (NCSA Nebula, SDSC Cloud, and XSEDE JetStream)
 * Cost estimates for hosting ESIPhub for development and at scale for workshops
