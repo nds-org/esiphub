@@ -1,0 +1,81 @@
+# Example Jupyterhub configuration for ESIPhub
+hub:
+  # output of second execution of 'openssl rand -hex 32'
+  cookieSecret: ""
+  db:
+    type: sqlite-pvc
+    pvc:
+      accessModes:
+        - ReadWriteOnce
+      storage: 1Gi
+      storageClassName: rook-block
+  extraEnv:
+    JUPYTER_ENABLE_LAB: 1
+  extraConfig: |
+    c.KubeSpawner.cmd = ['jupyter-labhub']
+    from tornado import gen
+    from traitlets import Dict
+    from jupyterhub.auth import Authenticator
+
+    class DictAuthenticator(Authenticator):
+
+        passwords = Dict(
+             {
+                  "user1": "password1",
+                  "user2": "password2"
+            },
+            config=True
+        )
+
+        @gen.coroutine
+        def authenticate(self, handler, data):
+            if self.passwords.get(data['username']) == data['password']:
+                return data['username’]
+
+proxy:
+  # output of second execution of 'openssl rand -hex 32'
+  secretToken: ""
+
+
+# Uncomment to use github oauth instead of static dictionary 
+#auth:
+#  type: github
+#  github:
+#    # 
+#    clientId: ""
+#    clientSecret: ""
+#    callbackUrl: "https://esiphub.ndslabs.org/hub/oauth_callback"
+
+singleuser:
+  memory:
+    guarantee: 1G
+    limit: 8G
+  storage:
+    type: dynamic
+    capacity: 10Gi
+    dynamic:
+      storageClass: rook-block
+    extraVolumeMounts:
+      - name: nfs-share
+        mountPath: /shared
+    extraVolumes:
+      - name: nfs-share
+        nfs:
+          # NFS service IP 
+          server: ""
+          path: "/"
+          readOnly: false
+  image:
+    name: ndslabs/esiphub-notebook
+    tag: latest
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/tls-acme: "true"
+  hosts:
+    - esiphub.ndslabs.org
+  tls:
+   - hosts:
+      - esiphub.ndslabs.org
+     secretName: kubelego-tls-jupyterhub
