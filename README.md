@@ -3,8 +3,9 @@
 ESIPhub is an incubator project of the [Earth Science Information Partners (ESIP) Lab](http://www.esipfed.org/esip-lab) initiative to develop a template for deploying a customized JupyterHub environment to support workshops at ESIP annual meetings.  Each year, scientists, engineers, educators, and practitioners convene to discuss their work, share ideas, and learn new tools and techniques. Workshops are often interactive and sometimes developed around applications such as Jupyter Notebooks. The goal of this project is to provide a framework for deploying JupyterHub using a standardized workshop configuration to provide predictability for instructors and reduce the time to setup.
 
 Aspects of the project include:
-* Template for deploying JupyterHub for ESIP via the [Zero-to-JupyterHub](https://zero-to-jupyterhub.readthedocs.io/) framework
-* Authentication using ESIP credentials
+* Configuration for deploying a Kubernetes cluster on OpenStack via the [Kubeadm Boostrapper with Terraform for OpenStack](https://github.com/nds-org/kubeadm-terraform) 
+* Template configuration for deploying JupyterHub for ESIP via the [Zero-to-JupyterHub](https://zero-to-jupyterhub.readthedocs.io/) framework
+* Authentication using pre-generated credentials
 * Ability to deploy on both commercial cloud (AWS) and OpenStack environments (NCSA Nebula, SDSC Cloud, and XSEDE JetStream)
 * Cost estimates for hosting ESIPhub for development and at scale for workshops
 * Information sharing within the ESIP and NDS communities
@@ -13,7 +14,7 @@ As a result, the ESIP community will have a predictable method to deploy a custo
 
 ## Bootstrapping ESIPhub
 
-The project team began by bootstrapping a [single-node Kubernetes environment on SDSC Cloud](docs/sdsc-bootstrap.md).  SDSC Cloud was selected because of resources available to the NDS group. The purpose of this environment was to minimize resource usage as the team became familiarized with the Kubernetes and Zero-to-JupyterHub paradigms. A single 2 vcpu and 8G virtual machine was sufficient for the first ~2 months of the project.
+The project team began by bootstrapping a [single-node Kubernetes environment on SDSC Cloud](docs/sdsc-bootstrap.md).  SDSC Cloud was selected because of resources available to the NDS group. The purpose of this environment was to minimize resource usage as the team became familiarized with the Kubernetes and Zero-to-JupyterHub paradigms. A single 2 vcpu and 8G virtual machine was sufficient for the first ~2 months of the project.  
 
 The next step was to provision a [multi-node cluster on SDSC Cloud](docs/sdsc-zonca.md). For this, we followed a model defined by [Andrea Zonca for JupyterHub on Jetstream](https://zonca.github.io/2017/12/scalable-jupyterhub-kubernetes-jetstream.html) with some minor modifications. This allowed us to explore storage models, particulary the use of [Rook](https://rook.io/docs/rook/master/) to support persistent volume claims in OpenStack.
 
