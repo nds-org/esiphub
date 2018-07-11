@@ -9,8 +9,8 @@ RUN conda install -y -q nb_conda_kernels && \
     conda install -y -q -c conda-forge geopandas && \
     conda install -y -q -c conda-forge xlsxwriter && \
     conda install -y -q -c conda-forge pydrive && \
-    conda install -y -q -c conda-forge hone && \
-    conda install -y -q -c conda-forge xarray
+    conda install -y -q -c conda-forge xarray && \
+    pip install hone
 
 RUN conda install --quiet --yes \
         'ipyleaflet=0.9.0' \
