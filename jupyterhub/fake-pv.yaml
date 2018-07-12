@@ -1,0 +1,15 @@
+# Fake persistent volume for single-node installs
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: hub-db-dir
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/data/hub"
