@@ -20,11 +20,19 @@ The next step was to provision a [multi-node cluster on SDSC Cloud](docs/sdsc-zo
 
 Building on this work and our experience [provisioning Kubernetes clusters via ansible](https://github.com/nds-org/ndslabs-deploy-tools), the NDS team took an initial pass at a [Terraform recipe](https://github.com/nds-org/kubeadm-terraform) for provisioning using Zonca's approach. We've now tested the Terraform process on NCSA Nebula, SDSC Cloud and TACC Jetstream OpenStack environments.
 
-## Storage revisited
-An ongoing challenge in the OpenStack environment is supporting storage. As usual, two separate needs arose: the ability to support per-container storage (i.e., ReadWriteOnce) versus shared storage (i.e., ReadWriteMany). The NDS team has spent a fair amount of energy looking at storage options for Kubernetes on OpenStack: NFS, Gluster/Heketi, Ceph/Rook, etc. The Rook model seems effective for single-user storage, but the shared filesystem model was less desirable (complicated and difficult to troubleshoot).  We opted to use Rook for the notebook PVC and NFS for distributed shared storage across all environments.
 
 ## Authentication
 One of the original goals of the project was to support authentication using ESIP credentials.  However, after [some discsussion](https://github.com/nds-org/esiphub/issues/4) it was decided to move ahead with another model for this pilot project.  The ESIP annual meeting has ~400 attendees and any given workshop may have 60 or users. To simplify the process of running a workshop, the team decided to use predefined usernames and passwords that could be distributed to users at the meeting.
+
+## Storage revisited
+An ongoing challenge in the OpenStack environment is supporting storage. As usual, two separate needs arose: the ability to support per-container storage (i.e., ReadWriteOnce) versus shared storage (i.e., ReadWriteMany). The NDS team has spent a fair amount of energy looking at storage options for Kubernetes on OpenStack: [NFS](https://opensource.ncsa.illinois.edu/confluence/display/~lambert8/NFS+in+Kubernetes#NFSinKubernetes-BasicIn-ClusterServerExample), Gluster/Heketi, [Ceph/Rook](https://opensource.ncsa.illinois.edu/confluence/display/~lambert8/Rook), etc. The Rook model seems effective for single-user storage, but the shared filesystem model was less desirable (complicated and difficult to troubleshoot).  We opted to use Rook for the notebook PVCs and NFS for distributed shared storage across all environments. The [NSF Provisioner](https://opensource.ncsa.illinois.edu/confluence/display/~lambert8/NFS+in+Kubernetes) provides a viable alternative to rook.
+
+## Other Configurations
+
+* ESIPhub uses a [custom Docker image](dockerfiles/Dockerfile.scipy) which is autobuilt on [Dockerhub](https://hub.docker.com/r/ndslabs/esiphub-notebook/)
+* Users will have 8GB of RAM and 10GB of storage in addition to the shared scratch space via NFS
+* A custom `postStart` life-cycle hook copies a quickstart Readme and creates a symbolic link to the shared mount in each user's home directory.
+* Kube-lego is used for TLS with DNS managed under the `ndslabs.org` domain.
 
 ## Moving from OpenStack to AWS
 Next up...
