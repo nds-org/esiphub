@@ -68,7 +68,20 @@ singleuser:
   image:
     name: ndslabs/esiphub-notebook
     tag: latest
-
+  lifecycleHooks:
+    postStart:
+      exec:
+        command:
+          - "sh"
+          - "-c"
+          - >
+            if [ -d /shared ] && [ ! -L  ~/shared ]; then
+            ln -sf /shared ~;
+            fi;
+            if [ -f /shared/QuickStart.md ] && [ ! -f ~/QuickStart.md ]; then
+            cp /shared/QuickStart.md ~;
+            fi
+            
 ingress:
   enabled: true
   annotations:
