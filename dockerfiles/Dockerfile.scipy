@@ -11,6 +11,8 @@ RUN conda install -y -q nb_conda_kernels && \
     conda install -y -q -c conda-forge pydrive && \
     conda install -y -q -c conda-forge xarray && \
     pip install hone
+    pip install h5pyd
+    pip install tables
 
 RUN conda install --quiet --yes \
         'ipyleaflet=0.9.0' \
