@@ -300,3 +300,5 @@ claim-jh-2dload-2dtest3-2dx2z847    Bound     pvc-77cd2bdc-8afb-11e8-8696-fa163e
 claim-jh-2dload-2dtest3-2dx2z848    Bound     pvc-84b8f542-8afb-11e8-8696-fa163e61f35e   1Gi        RWO            managed-nfs-storage   3m
 claim-jh-2dload-2dtest3-2dx2z849    Bound     pvc-7ec3af41-8afb-11e8-8696-fa163e61f35e   1Gi        RWO            managed-nfs-storage   3m
 ```
+
+I tried logging in as a standard esip user while this was running, and the startup time was quite slow, but I was in the end able to access the instance.
