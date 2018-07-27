@@ -34,5 +34,10 @@ An ongoing challenge in the OpenStack environment is supporting storage. As usua
 * A custom `postStart` life-cycle hook copies a quickstart Readme and creates a symbolic link to the shared mount in each user's home directory.
 * Kube-lego is used for TLS with DNS managed under the `ndslabs.org` domain.
 
-## Moving from OpenStack to AWS
-Next up...
+## Lessons Learned
+
+During the ESIP meeting, we encountered serious problems with Rook provisioning under load.  Notebook startup times were slow as the volumes were provisioned, resulting in 504 errors, and ultimatey Rook stopped provisioning with no clear error.  As a result, we quickly switched to the NFS client provisioner.
+
+
+## Load testing
+
