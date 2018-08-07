@@ -9,6 +9,12 @@ $ openstack coe cluster template list
 SSL exception connecting to https://10 (HTTP 500) (Request-ID: req-36dc456e-b0bc-49e5-b11d-77850cf4d5a6)
 ```
 
+And magnum too:
+```
+$ magnum cluster-list
+ERROR: b'SSL exception connecting to https://10 (HTTP 500) (Request-ID: req-bf1ff6a5-9812-4be2-bb8d-a0566b805b2d)'
+```
+
 
 ## IU
 
