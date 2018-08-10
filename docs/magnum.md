@@ -32,6 +32,7 @@ openstack coe cluster template create \
 	   --docker-volume-size 20 \
 	   --docker-storage-driver devicemapper \
 	   --volume-driver cinder \
+	   --labels cloud-provider-enabled=true \ 
 	   --floating-ip-enabled my-k8s-template
 ```
 
